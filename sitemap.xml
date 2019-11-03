@@ -3,15 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://ralucageorgescu.github.io/categories/</loc>
+    <loc>https://ralucageorgescu.github.io/posts/my-first-post/</loc>
+    <lastmod>2019-11-03T18:27:14+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ralucageorgescu.github.io/posts/</loc>
+    <lastmod>2019-11-03T18:27:14+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://ralucageorgescu.github.io/</loc>
+    <lastmod>2019-11-03T18:27:14+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ralucageorgescu.github.io/tags/ray/</loc>
+    <lastmod>2019-11-03T18:27:14+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://ralucageorgescu.github.io/tags/</loc>
+    <lastmod>2019-11-03T18:27:14+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ralucageorgescu.github.io/categories/</loc>
   </url>
   
 </urlset>

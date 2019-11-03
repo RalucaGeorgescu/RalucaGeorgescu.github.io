@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+    <base href="/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="author" content="Raluca Georgescu">
+
+<meta name="description" content="">
+
+<title>Intro to Ray</title>
+<meta name="generator" content="Hugo 0.59.1" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet" type="text/css">
+<link  href="https://ralucageorgescu.github.io//css/theme.min.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div class="page-container container-fluid">
+<div class="col-md-3 menu">
+    <nav class="col-md-3">
+    
+    <h3 class="home-link"><a href="https://ralucageorgescu.github.io/">Filesystem</a></h3>
+    <div id="last-posts" class="open">
+        <h3 data-open="last-posts">Blog</h3>
+        <ul>
+            
+            <li><a href="https://ralucageorgescu.github.io/posts/my-first-post/">Intro to Ray</a></li>
+            
+        </ul>
+    </div>
+    
+
+    
+    <div id="tags" class="open">
+        <h3 data-open="tags">Tags</h3>
+        <ul class="tags">
+            
+            <li><a href="/tags/ray">ray</a></li>
+            
+        </ul>
+    </div>
+    
+
+    
+</nav>
+
+</div>
+<div class="col-md-9 content">
+
+<h1>Intro to Ray</h1>
+<h4>Published 11-03-2019 18:27:14</h4>
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-via="kendo5731"></a>
+<script>!function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+    if (!d.getElementById(id)) {
+        js = d.createElement(s);
+        js.id = id;
+        js.src = p + '://platform.twitter.com/widgets.js';
+        fjs.parentNode.insertBefore(js, fjs);
+    }
+}(document, 'script', 'twitter-wjs');</script>
+
+<div class="fb-share-button" data-href="https://ralucageorgescu.github.io/posts/my-first-post/" data-layout="button"></div>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en-US/sdk.js#xfbml=1&version=v2.5";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<article>
+    
+
+<p>Welcome to my blog! For as long as I can remember, I learned things by making analogies with either real or imaginary setups. I applied this particularly in what I decided to pursue as a career – software engineering. Abstract concepts would immediately be translated to “Oh it’s just like that thing in football!”, “Oh it’s just like airports” and so, now I’ve decided I should give it a go at writing things down.</p>
+
+<p>As I’ll aim to learn tools and frameworks that I find interesting, I’ll put them in the context of nothing else, but my favourite fantastical world ever, Harry Potter. I’ll start with a distributed computing framework developed by the people behind RISE labs in UC Berkeley, called Ray. Then I’ll move onto 2 libraries built on top of Ray, specifically Tune and Rllib. I’ll maintain this blog mainly for my own reference, but if others find it useful, that’s even better! Hope the series will be interesting, useful and if all fails, at least funny!</p>
+
+<h2 id="ray-the-burrow">Ray - The Burrow</h2>
+
+<p>I’m bringing Ray into the Burrow – the cosiest and famous residence of the Weasley’s. All objects in Burrow are animated – they were all given some tasks and they’re executing them at the same time.</p>
+
+<p><img src="http://farm9.staticflickr.com/8155/6955692882_6ee5788085_o.gif" width=25%></p>
+
+<p>What Ray does is it helps when you want to run a lot of repetitive tasks in parallel. You can either run them in parallel on a single machine across its cores or on a cluster of machines. It relies on a series of concepts to schedule all the work and keep track of its progress. I like to start with the bigger picture and then drill down into the details. This will spread out across multiple posts. So let’s map the concepts to the Burrow.</p>
+
+<p>Let’s presume cooking dinner for the 7 Weasleys, plus guests, requires really complex computations and scheduling, where multiples utensils in the kitchen need to work in parallel and perform different tasks.</p>
+
+<p>In our case, the dinner is the application we want to execute, and the way Ray represents this application is as a graph of dependent tasks (e.g. you need to chop the carrots before adding them to the boil). Moreover, this graph is dynamic, so it evolves during execution (e.g. you’re performing more steps from the recipe as you go and they get added to the graph as you perform them).</p>
+
+<p>To introduce the next part, we’ll briefly define the difference between stateless and stateful computations. A computation is <em>stateful</em>, if we need to store previous interactions, like keeping a record of the spells we casted before. On the opposite side, as you’d expect, <em>stateless</em> computations are independent, they only care about the data they currently hold, nothing from the past. Hence, in Ray they can be executed on any node in the system. We’ll find out later what nodes are.</p>
+
+<p>So let’s try and define now Ray’s two main programming abstractions: <strong>tasks</strong> and <strong>actors</strong>. What do they mean and when would you want to use one or the other?</p>
+
+<p>A <strong>task</strong> is like casting a standalone spell. It is the execution of a remote function on a stateless worker. You might wonder what workers are, we’ll come to those in a bit as well. All the data the spell needs comes to it as you cast it. When you cast it, imagine you immediately receive a promise, called future, that this spell will eventually execute and return the result we wanted. As we all know, that’s not always the case and this accounts for possible faults along the way.</p>
+
+<p><img src="http://giphygifs.s3.amazonaws.com/media/FvJ4fmyI6gHLi/giphy.gif" alt="Alt text for my gif" /></p>
+
+<p>An <strong>actor</strong> allows stateful computations. It has a series of spells (methods) that can be invoked remotely and executed serially. This means all spells share a mutable actor state. They all belong to one Python class. You can pass a handle to an actor, so that other actors or tasks can cast spells on it. In this case, methods called on different actors execute in parallel.
+In dinner prep terms, if I cast the boiling spell on water in 10 pans, they’ll start at the same time in parallel. If I cast the boiling spell 10 times on the same pan, all the water in the pan shares the same state, so it’ll gradually increase the temperature more and more with each new boiling spell I cast.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#a6e22e">@ray</span><span style="color:#f92672">.</span>remote(num_gpus<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Pan</span>(object):
+	<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+		self<span style="color:#f92672">.</span>temperature <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+	
+	<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fervere</span>(self):
+		self<span style="color:#f92672">.</span>temperature <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span>
+		<span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>temperature
+
+<span style="color:#75715e"># create 10 Pan actors</span>
+pans <span style="color:#f92672">=</span> [Pan<span style="color:#f92672">.</span>remote() <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>)]
+cast_fervere_on_all_pans <span style="color:#f92672">=</span> ray<span style="color:#f92672">.</span>get([pan<span style="color:#f92672">.</span>fervere<span style="color:#f92672">.</span>remote() <span style="color:#66d9ef">for</span> pan <span style="color:#f92672">in</span> pans])
+<span style="color:#75715e"># prints [10,10,10,10,10,10,10,10,10,10]</span>
+cast_ferevere_on_one_pan <span style="color:#f92672">=</span> ray<span style="color:#f92672">.</span>get([pans[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>fervere<span style="color:#f92672">.</span>remote() <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">5</span>)]
+<span style="color:#75715e"># prints [10,20,30,40,50]</span></code></pre></div>
+
+</article>
+
+
+
+</div>
+</div>
+<script src="https://ralucageorgescu.github.io//js/theme.min.js" type="text/javascript"></script>
+
+
+</body>
+</html>
+

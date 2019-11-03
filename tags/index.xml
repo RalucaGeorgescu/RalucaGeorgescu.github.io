@@ -6,9 +6,19 @@
     <description>Recent content in Tags on Raluca Georgescu</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
+    <lastBuildDate>Sun, 03 Nov 2019 18:27:14 +0000</lastBuildDate>
     
 	<atom:link href="https://ralucageorgescu.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ray</title>
+      <link>https://ralucageorgescu.github.io/tags/ray/</link>
+      <pubDate>Sun, 03 Nov 2019 18:27:14 +0000</pubDate>
+      
+      <guid>https://ralucageorgescu.github.io/tags/ray/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>
