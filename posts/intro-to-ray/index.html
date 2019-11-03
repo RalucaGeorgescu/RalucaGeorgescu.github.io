@@ -94,6 +94,8 @@
 
 <p>In our case, the dinner is the application we want to execute, and the way Ray represents this application is as a graph of dependent tasks (e.g. you need to chop the carrots before adding them to the boil). Moreover, this graph is dynamic, so it evolves during execution (e.g. you’re performing more steps from the recipe as you go and they get added to the graph as you perform them).</p>
 
+<p><img src="../../resources/images/diagram_task_actor.PNG"></p>
+
 <p>To introduce the next part, we’ll briefly define the difference between stateless and stateful computations. A computation is <em>stateful</em>, if we need to store previous interactions, like keeping a record of the spells we casted before. On the opposite side, as you’d expect, <em>stateless</em> computations are independent, they only care about the data they currently hold, nothing from the past. Hence, in Ray they can be executed on any node in the system. We’ll find out later what nodes are.</p>
 
 <p>So let’s try and define now Ray’s two main programming abstractions: <strong>tasks</strong> and <strong>actors</strong>. What do they mean and when would you want to use one or the other?</p>
