@@ -113,8 +113,9 @@
 
 <h3 id="actors">Actors</h3>
 
-<p>An <strong>actor</strong> allows stateful computations. It has a series of spells (methods) that can be invoked remotely and executed serially. This means all spells share a mutable actor state. They all belong to one Python class. You can pass a handle to an actor, so that other actors or tasks can cast spells on it. In this case, methods called on different actors execute in parallel.
-In dinner prep terms, if I cast the boiling spell on water in 10 pans, they’ll start at the same time in parallel. If I cast the boiling spell 10 times on the same pan, all the water in the pan shares the same state, so it’ll gradually increase the temperature more and more with each new boiling spell I cast.</p>
+<p>An <strong>actor</strong> allows stateful computations. It has a series of spells (methods) that can be invoked remotely and executed serially. This means all spells share a mutable actor state. They all belong to one Python class. You can pass a handle to an actor, so that other actors or tasks can cast spells on it. In this case, methods called on different actors execute in parallel.</p>
+
+<p>In dinner prep terms, if I cast the boiling spell on water in 10 pans, they’ll start at the same time in parallel. If I cast the boiling spell 10 times on the same pan, all the water in the pan shares the same state, so it’ll gradually increase the temperature more and more with each new boiling spell I cast.</p>
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#a6e22e">@ray</span><span style="color:#f92672">.</span>remote(num_gpus<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Pan</span>(object):
